@@ -27,4 +27,33 @@ class ProductoDAO
         $stmt = $this->conexion->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function eliminar($id)
+    {
+        $sql = "DELETE FROM productos WHERE id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
+    public function buscarPorId($id)
+    {
+        $sql = "SELECT * FROM productos WHERE id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function actualizar($id, $nombre, $precio, $foto, $categoria_id)
+    {
+        if ($foto) {
+            $sql = "UPDATE productos SET nombre = ?, precio = ?, foto = ?, categoria_id = ? WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$nombre, $precio, $foto, $categoria_id, $id]);
+        } else {
+            $sql = "UPDATE productos SET nombre = ?, precio = ?, categoria_id = ? WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$nombre, $precio, $categoria_id, $id]);
+        }
+    }
+
 }
