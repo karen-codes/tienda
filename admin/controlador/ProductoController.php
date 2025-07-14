@@ -33,7 +33,7 @@ class ProductoController
             $foto = null;
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
                 $nombreArchivo = uniqid() . "_" . basename($_FILES['foto']['name']);
-                $rutaDestino = "imagenes/" . $nombreArchivo;
+                $rutaDestino = "../imagenes/" . $nombreArchivo;
 
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
                     $foto = $nombreArchivo;
@@ -84,7 +84,7 @@ class ProductoController
             $foto = null;
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
                 $nombreArchivo = uniqid() . "_" . basename($_FILES['foto']['name']);
-                $ruta = "imagenes/" . $nombreArchivo;
+                $ruta = "../imagenes/" . $nombreArchivo;
 
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta)) {
                     // Eliminar imagen anterior
