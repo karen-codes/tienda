@@ -30,9 +30,21 @@ class ProductoDAO
 
     public function eliminar($id)
     {
-        $sql = "DELETE FROM productos WHERE id = ?";
-        $stmt = $this->conexion->prepare($sql);
-        return $stmt->execute([$id]);
+        // Obtener la foto antes de eliminar
+        $stmt = $this->conexion->prepare("SELECT foto FROM productos WHERE id = ?");
+        $stmt->execute([$id]);
+        $foto = $stmt->fetchColumn();
+
+        // Eliminar el registro
+        $stmt = $this->conexion->prepare("DELETE FROM productos WHERE id = ?");
+        $resultado = $stmt->execute([$id]);
+
+        // Si se eliminó correctamente, elimina la imagen
+        if ($resultado && $foto && file_exists("imagenes/$foto")) {
+            unlink("imagenes/$foto");
+        }
+
+        return $resultado;
     }
 
     public function buscarPorId($id)

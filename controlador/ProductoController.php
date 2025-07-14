@@ -24,7 +24,7 @@ class ProductoController
             // Manejo del archivo subido
             $foto = null;
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-                $nombreArchivo = basename($_FILES['foto']['name']);
+                $nombreArchivo = uniqid() . "_" . basename($_FILES['foto']['name']);
                 $rutaDestino = "imagenes/" . $nombreArchivo;
 
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
@@ -74,7 +74,12 @@ class ProductoController
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
                 $nombreArchivo = uniqid() . "_" . basename($_FILES['foto']['name']);
                 $ruta = "imagenes/" . $nombreArchivo;
+
                 if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta)) {
+                    // Eliminar imagen anterior
+                    if (!empty($producto['foto']) && file_exists("imagenes/" . $producto['foto'])) {
+                        unlink("imagenes/" . $producto['foto']);
+                    }
                     $foto = $nombreArchivo;
                 }
             }
