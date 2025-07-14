@@ -32,6 +32,7 @@
                             <div class="card-body">
                                 <h5 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h5>
                                 <p class="card-text">$<?= number_format($item['precio'], 2) ?></p>
+                                <a href="index.php?action=detalle&id=<?= $item['id'] ?>" class="btn btn-sm btn-outline-primary">Ver más</a>
                             </div>
                         </div>
                     </div>

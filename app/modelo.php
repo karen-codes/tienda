@@ -19,4 +19,15 @@ class ProductoDAO
         $stmt = $this->conexion->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function obtenerPorId($id)
+    {
+        $sql = "SELECT p.*, c.nombre AS categoria
+            FROM productos p
+            INNER JOIN categoria c ON p.categoria_id = c.id
+            WHERE p.id = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
