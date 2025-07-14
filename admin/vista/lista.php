@@ -31,7 +31,7 @@
                     <td><?= $prod['id'] ?></td>
                     <td>
                         <?php if ($prod['foto']): ?>
-                            <img src="imagenes/<?= htmlspecialchars($prod['foto']) ?>" alt="foto">
+                            <img src="../imagenes/<?= htmlspecialchars($prod['foto']) ?>" alt="foto">
                         <?php else: ?>
                             <em>Sin imagen</em>
                         <?php endif; ?>

@@ -18,7 +18,7 @@
 
         <label>Foto actual:</label><br>
         <?php if ($producto['foto']): ?>
-            <img src="imagenes/<?= htmlspecialchars($producto['foto']) ?>" width="100"><br>
+            <img src="../imagenes/<?= htmlspecialchars($producto['foto']) ?>" width="100"><br>
         <?php else: ?>
             <em>Sin imagen</em><br>
         <?php endif; ?>

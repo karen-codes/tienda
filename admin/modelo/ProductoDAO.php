@@ -1,5 +1,5 @@
 <?php
-require_once "config/conexion.php";
+require_once APP_PATH . "/config/conexion.php";
 
 class ProductoDAO
 {
@@ -57,15 +57,37 @@ class ProductoDAO
 
     public function actualizar($id, $nombre, $precio, $foto, $categoria_id)
     {
-        if ($foto) {
-            $sql = "UPDATE productos SET nombre = ?, precio = ?, foto = ?, categoria_id = ? WHERE id = ?";
-            $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$nombre, $precio, $foto, $categoria_id, $id]);
-        } else {
-            $sql = "UPDATE productos SET nombre = ?, precio = ?, categoria_id = ? WHERE id = ?";
-            $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$nombre, $precio, $categoria_id, $id]);
+        try {
+            if ($foto) {
+                // Obtener imagen anterior
+                $stmt = $this->conexion->prepare("SELECT foto FROM productos WHERE id = ?");
+                $stmt->execute([$id]);
+                $fotoAnterior = $stmt->fetchColumn();
+
+                // Actualizar incluyendo la nueva imagen
+                $sql = "UPDATE productos SET nombre = ?, precio = ?, foto = ?, categoria_id = ? WHERE id = ?";
+                $stmt = $this->conexion->prepare($sql);
+                $resultado = $stmt->execute([$nombre, $precio, $foto, $categoria_id, $id]);
+
+                // Eliminar la imagen antigua si existe
+                if ($resultado && $fotoAnterior && file_exists("imagenes/$fotoAnterior")) {
+                    unlink("imagenes/$fotoAnterior");
+                }
+
+                return $resultado;
+
+            } else {
+                // Actualizar sin tocar la imagen
+                $sql = "UPDATE productos SET nombre = ?, precio = ?, categoria_id = ? WHERE id = ?";
+                $stmt = $this->conexion->prepare($sql);
+                return $stmt->execute([$nombre, $precio, $categoria_id, $id]);
+            }
+
+        } catch (PDOException $e) {
+            // Manejo de errores si lo deseas
+            return false;
         }
     }
+
 
 }

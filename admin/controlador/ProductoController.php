@@ -1,5 +1,13 @@
 <?php
-require_once "modelo/ProductoDAO.php";
+
+// Verifica que solo usuarios autenticados accedan
+/*session_start();
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php?action=login");
+    exit();
+}*/
+
+require_once APP_PATH . "/admin/modelo/ProductoDAO.php";
 
 class ProductoController
 {

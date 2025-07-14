@@ -1,5 +1,5 @@
 <?php
-require_once "config/conexion.php";
+require_once APP_PATH . "/config/conexion.php";
 
 class CategoriaDAO {
     private $conexion;
