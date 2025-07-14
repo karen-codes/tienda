@@ -19,29 +19,49 @@ foreach ($productos as $prod) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Tienda Virtual</title>
+    <!-- Bootstrap 5 desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <h1>Bienvenido a la Tienda</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tienda Virtual</a>
+            <a class="btn btn-outline-light" href="admin/index.php?action=login">Acceso Admin</a>
+        </div>
+    </nav>
 
-    <?php foreach ($agrupados as $categoria => $items): ?>
-        <h2><?= htmlspecialchars($categoria) ?></h2>
-        <ul>
-            <?php foreach ($items as $item): ?>
-                <li>
-                    <?= htmlspecialchars($item['nombre']) ?> - 
-                    $<?= number_format($item['precio'], 2) ?>
-                    <?php if ($item['foto']): ?>
-                        <br><img src="imagenes/<?= $item['foto'] ?>" width="100">
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endforeach; ?>
+    <div class="container">
+        <?php foreach ($agrupados as $categoria => $items): ?>
+            <h2 class="text-primary mt-4"><?= htmlspecialchars($categoria) ?></h2>
+            <div class="row">
+                <?php foreach ($items as $item): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <?php if ($item['foto']): ?>
+                                <img src="imagenes/<?= $item['foto'] ?>" class="card-img-top"
+                                    alt="<?= htmlspecialchars($item['nombre']) ?>">
+                            <?php endif; ?>
+                            <div class="card-body">
+                                <h5 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h5>
+                                <p class="card-text">$<?= number_format($item['precio'], 2) ?></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
 
-    <hr>
-    <a href="admin/index.php?action=login">Acceder como Administrador</a>
+    <footer class="bg-light text-center py-3 mt-4">
+        <p class="mb-0">© <?= date('Y') ?> Mi Tienda Virtual</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
