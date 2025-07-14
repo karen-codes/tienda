@@ -70,6 +70,9 @@ class ProductoController
             $precio = $_POST['precio'];
             $categoria_id = $_POST['categoria_id'];
 
+            // 🔍 Traer los datos actuales del producto (incluye imagen)
+            $producto = $this->modelo->buscarPorId($id);
+
             $foto = null;
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
                 $nombreArchivo = uniqid() . "_" . basename($_FILES['foto']['name']);
