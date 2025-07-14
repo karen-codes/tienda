@@ -1,0 +1,50 @@
+<?php
+require_once "modelo/ProductoDAO.php";
+
+class ProductoController
+{
+    private $modelo;
+
+    public function __construct()
+    {
+        $this->modelo = new ProductoDAO();
+    }
+
+    public function registrar()
+    {
+        require_once "modelo/CategoriaDAO.php";
+        $categoriaDAO = new CategoriaDAO();
+        $categorias = $categoriaDAO->listar();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nombre = $_POST['nombre'];
+            $precio = $_POST['precio'];
+            $categoria_id = $_POST['categoria_id'];
+
+            // Manejo del archivo subido
+            $foto = null;
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                $nombreArchivo = basename($_FILES['foto']['name']);
+                $rutaDestino = "imagenes/" . $nombreArchivo;
+
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
+                    $foto = $nombreArchivo;
+                }
+            }
+
+            $this->modelo->insertar($nombre, $precio, $foto, $categoria_id);
+            header("Location: index.php?action=listar");
+            exit();
+        }
+
+        // Mostrar el formulario con categorías
+        include "vista/formulario.php";
+    }
+
+
+    public function listar()
+    {
+        $productos = $this->modelo->listar();
+        include "vista/lista.php";
+    }
+}
