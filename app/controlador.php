@@ -1,17 +1,18 @@
 <?php
 // Se define la ruta base de la aplicación si no está definida.
 if (!defined('APP_PATH')) {
-    define('APP_PATH', dirname(dirname(__FILE__)));
+    define('APP_PATH', dirname(__FILE__)); // APP_PATH para el index.php principal
 }
 
-// Inicia la sesión si aún no está iniciada. Esto es crucial para el carrito basado en sesiones.
+// Inicia la sesión si aún no está iniciada.
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Se incluye el modelo principal (ProductoDAO) y el nuevo MensajeContactoDAO.
+// Se incluye el modelo principal (ProductoDAO) y los DAO necesarios.
 require_once APP_PATH . "/app/modelo.php"; 
 require_once APP_PATH . "/admin/modelo/MensajeContactoDAO.php"; 
+require_once APP_PATH . "/admin/modelo/PedidoDAO.php"; 
 
 class Controller
 {
@@ -94,7 +95,7 @@ class Controller
             }
 
             if (empty($errors)) {
-                $mensajeDAO = new MensajesContactoDAO(); 
+                $mensajeDAO = new MensajeContactoDAO(); 
                 if ($mensajeDAO->insertarMensaje($nombre, $correo, $asunto, $mensaje)) {
                     $message = ['type' => 'success', 'text' => '¡Tu mensaje ha sido enviado con éxito!'];
                     $_POST = [];
@@ -114,7 +115,6 @@ class Controller
      */
     public function carrito()
     {
-        // La vista del carrito ya manejará la visualización de $_SESSION['carrito']
         include APP_PATH . "/app/vista/carrito.php";
     }
 
@@ -125,17 +125,16 @@ class Controller
     public function agregar_al_carrito()
     {
         $id_producto = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
-        $cantidad = filter_var($_POST['cantidad'] ?? 1, FILTER_VALIDATE_INT); // Cantidad por defecto 1
+        $cantidad = filter_var($_POST['cantidad'] ?? 1, FILTER_VALIDATE_INT); 
 
         if ($id_producto === false || $id_producto <= 0 || $cantidad === false || $cantidad <= 0) {
-            // Manejar error de ID o cantidad inválida
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'Producto o cantidad inválida para añadir al carrito.'];
             header("Location: index.php?action=inicio");
             exit();
         }
 
         $productoDAO = new ProductoDAO();
-        $producto = $productoDAO->obtenerPorId($id_producto); // Asume que este método existe y devuelve los datos del producto
+        $producto = $productoDAO->obtenerPorId($id_producto); 
 
         if (!$producto) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'El producto no se encontró.'];
@@ -143,27 +142,24 @@ class Controller
             exit();
         }
 
-        // Si el carrito no existe en la sesión, inicializarlo
         if (!isset($_SESSION['carrito'])) {
             $_SESSION['carrito'] = [];
         }
 
-        // Si el producto ya está en el carrito, actualizar la cantidad
         if (isset($_SESSION['carrito'][$id_producto])) {
             $_SESSION['carrito'][$id_producto]['cantidad'] += $cantidad;
         } else {
-            // Si no está, añadir el producto al carrito
             $_SESSION['carrito'][$id_producto] = [
                 'id' => $producto['id'],
                 'nombre' => $producto['nombre'],
                 'precio' => $producto['precio'],
-                'foto' => $producto['foto'], // Se asume que la foto se obtiene con obtenerPorId
+                'foto' => $producto['foto'], 
                 'cantidad' => $cantidad
             ];
         }
 
         $_SESSION['message'] = ['type' => 'success', 'text' => htmlspecialchars($producto['nombre']) . ' añadido al carrito.'];
-        header("Location: index.php?action=carrito"); // Redirigir al carrito o a la página anterior
+        header("Location: index.php?action=carrito"); 
         exit();
     }
 
@@ -182,7 +178,6 @@ class Controller
                         $_SESSION['carrito'][$id_producto]['cantidad'] = $cantidad;
                     }
                 } elseif ($id_producto !== false && $id_producto > 0 && $cantidad !== false && $cantidad <= 0) {
-                    // Si la cantidad es 0 o menos, eliminar el producto del carrito
                     unset($_SESSION['carrito'][$id_producto]);
                 }
             }
@@ -227,8 +222,7 @@ class Controller
     }
 
     /**
-     * Lógica para finalizar la compra (simulada).
-     * En una aplicación real, esto implicaría procesar el pago, crear un pedido, etc.
+     * Muestra el formulario de checkout para que el cliente ingrese sus datos.
      */
     public function finalizar_compra()
     {
@@ -237,12 +231,77 @@ class Controller
             header("Location: index.php?action=carrito");
             exit();
         }
+        // Se inicializan variables para repoblar el formulario en caso de error
+        $nombreCliente = $_POST['nombre_cliente'] ?? '';
+        $correoCliente = $_POST['correo_cliente'] ?? '';
+        $direccionEnvio = $_POST['direccion_envio'] ?? '';
+        $errors = []; // Para errores de validación del formulario de checkout
 
-        // Aquí iría la lógica real de procesamiento de pago y creación de pedido.
-        // Por ahora, solo simulamos y vaciamos el carrito.
-        $_SESSION['message'] = ['type' => 'success', 'text' => '¡Compra finalizada con éxito! Gracias por tu pedido.'];
-        unset($_SESSION['carrito']); // Vaciar el carrito después de la compra
-        header("Location: index.php?action=inicio"); // Redirigir a la página de inicio o a una página de confirmación
-        exit();
+        include APP_PATH . "/app/vista/checkout.php"; // Carga la vista del formulario de checkout
+    }
+
+    /**
+     * Procesa la compra: valida los datos del formulario de checkout y guarda el pedido.
+     */
+    public function procesar_compra()
+    {
+        if (empty($_SESSION['carrito'])) {
+            $_SESSION['message'] = ['type' => 'danger', 'text' => 'No puedes procesar una compra con un carrito vacío.'];
+            header("Location: index.php?action=carrito");
+            exit();
+        }
+
+        $errors = [];
+        $nombreCliente = trim($_POST['nombre_cliente'] ?? '');
+        $correoCliente = trim($_POST['correo_cliente'] ?? '');
+        $direccionEnvio = trim($_POST['direccion_envio'] ?? '');
+
+        // Validación de los datos del formulario de checkout
+        if (empty($nombreCliente)) {
+            $errors['nombre_cliente'] = "El nombre es obligatorio.";
+        } elseif (strlen($nombreCliente) > 255) {
+            $errors['nombre_cliente'] = "El nombre no debe exceder los 255 caracteres.";
+        }
+
+        if (empty($correoCliente)) {
+            $errors['correo_cliente'] = "El correo electrónico es obligatorio.";
+        } elseif (!filter_var($correoCliente, FILTER_VALIDATE_EMAIL)) {
+            $errors['correo_cliente'] = "El formato del correo electrónico no es válido.";
+        } elseif (strlen($correoCliente) > 255) {
+            $errors['correo_cliente'] = "El correo no debe exceder los 255 caracteres.";
+        }
+
+        if (empty($direccionEnvio)) {
+            $errors['direccion_envio'] = "La dirección de envío es obligatoria.";
+        } elseif (strlen($direccionEnvio) > 500) {
+            $errors['direccion_envio'] = "La dirección no debe exceder los 500 caracteres.";
+        }
+
+        if (!empty($errors)) {
+            // Si hay errores, se vuelve a mostrar el formulario de checkout con los errores
+            $message = ['type' => 'danger', 'text' => 'Por favor, corrige los errores en el formulario de envío.'];
+            include APP_PATH . "/app/vista/checkout.php";
+            return; // Detener la ejecución para mostrar el formulario con errores
+        }
+
+        // Si la validación es exitosa, procede a guardar el pedido
+        $totalPedido = 0;
+        foreach ($_SESSION['carrito'] as $item) {
+            $totalPedido += $item['precio'] * $item['cantidad'];
+        }
+
+        $pedidoDAO = new PedidoDAO();
+
+        if ($pedidoDAO->guardarPedido($nombreCliente, $correoCliente, $direccionEnvio, $totalPedido, $_SESSION['carrito'])) {
+            unset($_SESSION['carrito']); // Vaciar el carrito después de guardar el pedido
+            $_SESSION['message'] = ['type' => 'success', 'text' => '¡Compra finalizada con éxito! Gracias por tu pedido.'];
+            header("Location: index.php?action=inicio"); // Redirigir a la página de inicio o a una página de confirmación
+            exit();
+        } else {
+            $_SESSION['message'] = ['type' => 'danger', 'text' => 'Hubo un error al procesar tu compra. Por favor, inténtalo de nuevo.'];
+            header("Location: index.php?action=carrito"); // Redirigir de vuelta al carrito con error
+            exit();
+        }
     }
 }
+

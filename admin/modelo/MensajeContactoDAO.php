@@ -7,13 +7,13 @@ if (!defined('APP_PATH')) {
 // Se incluye el archivo de conexión a la base de datos.
 require_once APP_PATH . "/config/conexion.php";
 
-class MensajeContactoDAO
+// CORRECCIÓN: El nombre de la clase ahora es 'MensajeContactoDAO' (singular)
+class MensajeContactoDAO 
 {
     private $conexion;
 
     public function __construct()
     {
-        // Establece la conexión a la base de datos al instanciar la clase.
         $this->conexion = Conexion::conectar();
     }
 
@@ -33,11 +33,20 @@ class MensajeContactoDAO
         try {
             return $stmt->execute([$nombre, $correo, $asunto, $mensaje]);
         } catch (PDOException $e) {
-            // En un entorno de producción, aquí se registraría el error.
             error_log("Error al insertar mensaje de contacto: " . $e->getMessage());
             return false;
         }
     }
 
-    // Puedes añadir otros métodos aquí en el futuro, como listarMensajes(), buscarMensajePorId(), etc.
+    /**
+     * Lista todos los mensajes de contacto de la base de datos.
+     *
+     * @return array Un array de mensajes de contacto.
+     */
+    public function listarMensajes()
+    {
+        $sql = "SELECT id, nombre, correo, asunto, mensaje, fecha_envio FROM mensajes_contacto ORDER BY fecha_envio DESC";
+        $stmt = $this->conexion->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

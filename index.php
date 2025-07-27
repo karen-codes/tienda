@@ -1,8 +1,8 @@
 <?php
-// Se define la ruta base de la aplicación si no está definida.
-// Esto asegura que las rutas relativas funcionen correctamente desde cualquier script.
+// Se define la ruta base de la aplicación.
+// Para el index.php principal (en la raíz de 'tienda'), APP_PATH debe apuntar a su propio directorio.
 if (!defined('APP_PATH')) {
-    define('APP_PATH', dirname(__FILE__)); // APP_PATH debe apuntar a la raíz de 'tienda'
+    define('APP_PATH', dirname(__FILE__)); // Esto hará que APP_PATH sea C:\xampp\htdocs\tienda
 }
 
 // Inicia la sesión si aún no está iniciada.
@@ -14,7 +14,6 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once APP_PATH . '/app/controlador.php';
 
 // Se incluye la utilidad CSRF.
-// CORRECCIÓN: La ruta correcta es APP_PATH . "/config/csrf.php"
 require_once APP_PATH . "/config/csrf.php"; 
 
 
