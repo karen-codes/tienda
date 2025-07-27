@@ -31,9 +31,13 @@
                 <option value="<?= $cat['id'] ?>"
                     <?= $producto['categoria_id'] == $cat['id'] ? 'selected' : '' ?>>
                     <?= htmlspecialchars($cat['nombre']) ?>
+                    <?= htmlspecialchars($cat['detalle']) ?>
                 </option>
             <?php endforeach; ?>
         </select><br><br>
+
+        <label>Detalle:</label><br>
+        <input type="text" name="detalle" value="<?= htmlspecialchars($producto['detalle']) ?>" required><br><br>
 
         <input type="submit" value="Actualizar Producto">
         <a href="index.php?action=listar">Cancelar</a>
