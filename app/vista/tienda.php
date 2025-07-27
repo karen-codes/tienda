@@ -20,26 +20,26 @@ if (isset($_SESSION['message'])) {
     <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tu archivo CSS personalizado -->
-    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="/tienda/assets/css/estilos.css">
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+            <a class="navbar-brand" href="/tienda/">Tienda Virtual</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+                        <a class="nav-link" href="/tienda/">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contacto">Contacto</a> <!-- CAMBIO: Enlace amigable -->
+                        <a class="nav-link" href="/tienda/contacto">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="carrito">Carrito</a> <!-- CAMBIO: Enlace amigable -->
+                        <a class="nav-link" href="/tienda/carrito">Carrito</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
@@ -68,7 +68,7 @@ if (isset($_SESSION['message'])) {
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
                             <?php if ($item['foto']): ?>
-                                <img src="imagenes/<?= htmlspecialchars($item['foto']) ?>" class="card-img-top"
+                                <img src="/tienda/imagenes/<?= htmlspecialchars($item['foto']) ?>" class="card-img-top"
                                     alt="<?= htmlspecialchars($item['nombre']) ?>">
                             <?php else: ?>
                                 <div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted" style="height: 200px;">
@@ -79,11 +79,11 @@ if (isset($_SESSION['message'])) {
                                 <h5 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h5>
                                 <p class="card-text">$<?= number_format($item['precio'], 2) ?></p>
                                 
-                                <!-- CAMBIO: Enlace a detalle del producto con URL amigable -->
-                                <a href="detalle/<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary mb-2">Ver más</a>
+                                <a href="/tienda/detalle/<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary mb-2">Ver más</a>
                                 
-                                <!-- Formulario para añadir al carrito (la acción sigue siendo la misma, ya que el ID va por GET) -->
-                                <form action="agregar_al_carrito?id=<?= htmlspecialchars($item['id']) ?>" method="POST" class="d-flex align-items-center">
+                                <!-- CAMBIO CRÍTICO: La acción del formulario debe ser una ruta absoluta -->
+                                <form action="/tienda/agregar_al_carrito" method="POST" class="d-flex align-items-center">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars($item['id']) ?>"> <!-- Añadimos el ID como campo oculto -->
                                     <input type="number" name="cantidad" value="1" min="1" class="form-control form-control-sm me-2" style="width: 70px;">
                                     <button type="submit" class="btn btn-sm btn-success">Añadir</button>
                                 </form>
@@ -103,7 +103,7 @@ if (isset($_SESSION['message'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Tu archivo JS personalizado -->
-    <script src="assets/js/funciones.js"></script>
+    <script src="/tienda/assets/js/funciones.js"></script>
 </body>
 
 </html>

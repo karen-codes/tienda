@@ -1,1 +1,16 @@
-imagenes/
+# Ignorar la carpeta de dependencias de Composer
+/vendor/
+
+# Ignorar el archivo de variables de entorno
+.env
+
+# Ignorar posibles archivos de depuración o logs (ejemplo)
+*.log
+.DS_Store
+Thumbs.db
+
+# Ignorar la carpeta de imágenes si no quieres que se versionen.
+# Si tus imágenes se suben dinámicamente, es mejor ignorarlas.
+# Si son imágenes estáticas del proyecto que deben ir con el código, entonces no la ignores.
+# Basado en tu imagen, parece que tienes imágenes subidas dinámicamente, por lo que la mantendremos ignorada.
+/imagenes/

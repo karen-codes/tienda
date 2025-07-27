@@ -60,7 +60,7 @@
             margin-top: 15px;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #3feeeeff;
         }
         .error-message {
             color: red;

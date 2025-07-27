@@ -36,7 +36,7 @@ $errors = $errors ?? [];
     <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tu archivo CSS personalizado -->
-    <link rel="stylesheet" href="assets/css/estilos.css"> <!-- CAMBIO: Ruta relativa corregida -->
+    <link rel="stylesheet" href="/tienda/assets/css/estilos.css"> <!-- CAMBIO: Ruta con prefijo /tienda/ -->
     <style>
         /* Estilos específicos para la página de checkout */
         .checkout-form-container {
@@ -102,20 +102,20 @@ $errors = $errors ?? [];
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+            <a class="navbar-brand" href="/tienda/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz de la aplicación -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+                        <a class="nav-link" href="/tienda/">Inicio</a> <!-- CAMBIO: Enlace a la raíz de la aplicación -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contacto">Contacto</a> <!-- CAMBIO: Enlace amigable -->
+                        <a class="nav-link" href="/tienda/contacto">Contacto</a> <!-- CAMBIO: Enlace amigable con prefijo -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="carrito">Carrito</a> <!-- CAMBIO: Enlace amigable -->
+                        <a class="nav-link active" aria-current="page" href="/tienda/carrito">Carrito</a> <!-- CAMBIO: Enlace amigable con prefijo -->
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
@@ -126,7 +126,7 @@ $errors = $errors ?? [];
     </nav>
 
     <div class="container py-4">
-        <a href="carrito" class="btn btn-secondary mb-3">← Volver al Carrito</a> <!-- CAMBIO: Enlace amigable -->
+        <a href="/tienda/carrito" class="btn btn-secondary mb-3">← Volver al Carrito</a> <!-- CAMBIO: Enlace amigable con prefijo -->
 
         <div class="checkout-form-container">
             <h1>Confirmar Compra</h1>
@@ -146,7 +146,7 @@ $errors = $errors ?? [];
                 <!-- Aquí podrías listar los productos del carrito si lo deseas, pero para simplicidad, solo el total. -->
             </div>
 
-            <form action="procesar_compra" method="POST"> <!-- CAMBIO: Acción amigable -->
+            <form action="/tienda/procesar_compra" method="POST"> <!-- CAMBIO: Acción amigable con prefijo -->
                 <div class="mb-3">
                     <label for="nombre_cliente" class="form-label">Nombre Completo:</label>
                     <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required
@@ -205,6 +205,6 @@ $errors = $errors ?? [];
     <!-- JS de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Tu archivo JS personalizado -->
-    <script src="assets/js/funciones.js"></script> <!-- CAMBIO: Ruta relativa corregida -->
+    <script src="/tienda/assets/js/funciones.js"></script> <!-- CAMBIO: Ruta con prefijo /tienda/ -->
 </body>
 </html>

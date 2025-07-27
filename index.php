@@ -9,10 +9,22 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// --- Carga de Composer Autoload y .env ---
+// Incluye el autoloader de Composer. Esto permite que las clases de las librerías instaladas
+// (como phpdotenv) sean cargadas automáticamente sin necesidad de 'require_once' manual.
+require_once APP_PATH . '/vendor/autoload.php';
+
+// Carga las variables de entorno desde el archivo .env
+$dotenv = Dotenv\Dotenv::createImmutable(APP_PATH);
+$dotenv->load();
+
+// --- Fin Carga de Composer Autoload y .env ---
+
+
 // Se incluye el controlador público que manejará las acciones de la tienda.
 require_once APP_PATH . '/app/controlador.php';
 
-// Se incluye la utilidad CSRF. (Aunque no se usa directamente en el frontend, es buena práctica tenerla cargada si se usa en algún formulario futuro)
+// Se incluye la utilidad CSRF.
 require_once APP_PATH . "/config/csrf.php"; 
 
 

@@ -124,12 +124,13 @@ class Controller
      */
     public function agregar_al_carrito()
     {
-        $id_producto = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
+        // CAMBIO: Obtener el ID del producto desde $_POST primero, y si no está, desde $_GET.
+        $id_producto = filter_var($_POST['id'] ?? $_GET['id'] ?? null, FILTER_VALIDATE_INT);
         $cantidad = filter_var($_POST['cantidad'] ?? 1, FILTER_VALIDATE_INT); 
 
         if ($id_producto === false || $id_producto <= 0 || $cantidad === false || $cantidad <= 0) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'Producto o cantidad inválida para añadir al carrito.'];
-            header("Location: index.php?action=inicio");
+            header("Location: /tienda/"); // Redirigir a la página de inicio con URL amigable
             exit();
         }
 
@@ -138,7 +139,7 @@ class Controller
 
         if (!$producto) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'El producto no se encontró.'];
-            header("Location: index.php?action=inicio");
+            header("Location: /tienda/"); // Redirigir a la página de inicio con URL amigable
             exit();
         }
 
@@ -159,7 +160,7 @@ class Controller
         }
 
         $_SESSION['message'] = ['type' => 'success', 'text' => htmlspecialchars($producto['nombre']) . ' añadido al carrito.'];
-        header("Location: index.php?action=carrito"); 
+        header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
         exit();
     }
 
@@ -185,7 +186,7 @@ class Controller
         } else {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'No se recibieron datos para actualizar el carrito.'];
         }
-        header("Location: index.php?action=carrito");
+        header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
         exit();
     }
 
@@ -206,7 +207,7 @@ class Controller
         } else {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'ID de producto inválido para eliminar del carrito.'];
         }
-        header("Location: index.php?action=carrito");
+        header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
         exit();
     }
 
@@ -217,7 +218,7 @@ class Controller
     {
         unset($_SESSION['carrito']);
         $_SESSION['message'] = ['type' => 'success', 'text' => 'El carrito ha sido vaciado.'];
-        header("Location: index.php?action=carrito");
+        header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
         exit();
     }
 
@@ -228,15 +229,15 @@ class Controller
     {
         if (empty($_SESSION['carrito'])) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'No puedes finalizar la compra con un carrito vacío.'];
-            header("Location: index.php?action=carrito");
+            header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
             exit();
         }
         // Se inicializan variables para repoblar el formulario en caso de error
         $nombreCliente = $_POST['nombre_cliente'] ?? '';
         $correoCliente = $_POST['correo_cliente'] ?? '';
         $direccionEnvio = $_POST['direccion_envio'] ?? '';
-        $metodoPago = $_POST['metodo_pago'] ?? ''; // Nuevo: para repoblar el método de pago
-        $errors = []; // Para errores de validación del formulario de checkout
+        $metodoPago = $_POST['metodo_pago'] ?? ''; 
+        $errors = []; 
 
         include APP_PATH . "/app/vista/checkout.php"; // Carga la vista del formulario de checkout
     }
@@ -248,7 +249,7 @@ class Controller
     {
         if (empty($_SESSION['carrito'])) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'No puedes procesar una compra con un carrito vacío.'];
-            header("Location: index.php?action=carrito");
+            header("Location: /tienda/carrito"); // Redirigir al carrito con URL amigable
             exit();
         }
 
@@ -256,7 +257,7 @@ class Controller
         $nombreCliente = trim($_POST['nombre_cliente'] ?? '');
         $correoCliente = trim($_POST['correo_cliente'] ?? '');
         $direccionEnvio = trim($_POST['direccion_envio'] ?? '');
-        $metodoPago = trim($_POST['metodo_pago'] ?? ''); // Nuevo: Recoge el método de pago
+        $metodoPago = trim($_POST['metodo_pago'] ?? ''); 
 
         // Validación de los datos del formulario de checkout
         if (empty($nombreCliente)) {
@@ -280,27 +281,23 @@ class Controller
         }
 
         // Validación del método de pago
-        $metodosValidos = ['tarjeta', 'paypal', 'transferencia']; // Define tus métodos de pago válidos
+        $metodosValidos = ['tarjeta', 'paypal', 'transferencia']; 
         if (empty($metodoPago) || !in_array($metodoPago, $metodosValidos)) {
             $errors['metodo_pago'] = "Debe seleccionar un método de pago válido.";
         }
 
         if (!empty($errors)) {
-            // Si hay errores, se vuelve a mostrar el formulario de checkout con los errores
             $message = ['type' => 'danger', 'text' => 'Por favor, corrige los errores en el formulario de envío.'];
-            // Se pasan los datos para repoblar el formulario
-            // Las variables $nombreCliente, $correoCliente, $direccionEnvio, $metodoPago y $errors ya están disponibles
             include APP_PATH . "/app/vista/checkout.php";
-            return; // Detener la ejecución para mostrar el formulario con errores
+            return; 
         }
 
         // SIMULACIÓN DE PROCESAMIENTO DE PAGO
-        // En una aplicación real, aquí integrarías una pasarela de pago (Stripe, PayPal, etc.)
-        $pagoExitoso = true; // Simula un pago exitoso
+        $pagoExitoso = true; 
 
         if (!$pagoExitoso) {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'El pago no pudo ser procesado. Por favor, inténtalo de nuevo.'];
-            header("Location: index.php?action=checkout"); // Redirigir de vuelta al checkout
+            header("Location: /tienda/finalizar_compra"); // Redirigir de vuelta al checkout con URL amigable
             exit();
         }
 
@@ -312,17 +309,14 @@ class Controller
 
         $pedidoDAO = new PedidoDAO();
 
-        // Puedes añadir el método de pago al pedido si lo tienes en la tabla 'pedidos'
-        // Por ahora, solo se guarda la información existente. Si quieres guardar el método de pago,
-        // necesitarías añadir una columna 'metodo_pago' a tu tabla 'pedidos' y modificar PedidoDAO.php
         if ($pedidoDAO->guardarPedido($nombreCliente, $correoCliente, $direccionEnvio, $totalPedido, $_SESSION['carrito'])) {
-            unset($_SESSION['carrito']); // Vaciar el carrito después de guardar el pedido
+            unset($_SESSION['carrito']); 
             $_SESSION['message'] = ['type' => 'success', 'text' => '¡Compra finalizada con éxito! Gracias por tu pedido.'];
-            header("Location: index.php?action=inicio"); // Redirigir a la página de inicio o a una página de confirmación
+            header("Location: /tienda/"); // Redirigir a la página de inicio con URL amigable
             exit();
         } else {
             $_SESSION['message'] = ['type' => 'danger', 'text' => 'Hubo un error al procesar tu compra. Por favor, inténtalo de nuevo.'];
-            header("Location: index.php?action=carrito"); // Redirigir de vuelta al carrito con error
+            header("Location: /tienda/carrito"); // Redirigir de vuelta al carrito con URL amigable
             exit();
         }
     }
