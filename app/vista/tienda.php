@@ -1,15 +1,14 @@
 <?php
-// Inicia la sesión si aún no está iniciada. Esto es crucial para el carrito basado en sesiones
-// y para mostrar mensajes temporales.
+// Inicia la sesión si aún no está iniciada.
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Recuperar y limpiar el mensaje de la sesión si existe.
+// Recuperar y limpiar el mensaje de la sesión si existe
 $message = null;
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
-    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo para que no se repita.
+    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo
 }
 ?>
 <!DOCTYPE html>
@@ -27,20 +26,20 @@ if (isset($_SESSION['message'])) {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Tienda Virtual</a>
+            <a class="navbar-brand" href="/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=inicio">Inicio</a>
+                        <a class="nav-link" href="/">Inicio</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=contacto">Contacto</a>
+                        <a class="nav-link" href="contacto">Contacto</a> <!-- CAMBIO: Enlace amigable -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=carrito">Carrito</a>
+                        <a class="nav-link" href="carrito">Carrito</a> <!-- CAMBIO: Enlace amigable -->
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
@@ -52,7 +51,7 @@ if (isset($_SESSION['message'])) {
 
     <div class="container">
         <?php
-        // Mostrar mensaje de éxito o error si existe.
+        // Mostrar mensaje de éxito o error si existe
         if (isset($message)):
             $alertClass = ($message['type'] === 'success') ? 'alert-success' : 'alert-danger';
         ?>
@@ -80,10 +79,11 @@ if (isset($_SESSION['message'])) {
                                 <h5 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h5>
                                 <p class="card-text">$<?= number_format($item['precio'], 2) ?></p>
                                 
-                                <a href="index.php?action=detalle&id=<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary mb-2">Ver más</a>
+                                <!-- CAMBIO: Enlace a detalle del producto con URL amigable -->
+                                <a href="detalle/<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary mb-2">Ver más</a>
                                 
-                                <!-- Formulario para añadir al carrito -->
-                                <form action="index.php?action=agregar_al_carrito&id=<?= htmlspecialchars($item['id']) ?>" method="POST" class="d-flex align-items-center">
+                                <!-- Formulario para añadir al carrito (la acción sigue siendo la misma, ya que el ID va por GET) -->
+                                <form action="agregar_al_carrito?id=<?= htmlspecialchars($item['id']) ?>" method="POST" class="d-flex align-items-center">
                                     <input type="number" name="cantidad" value="1" min="1" class="form-control form-control-sm me-2" style="width: 70px;">
                                     <button type="submit" class="btn btn-sm btn-success">Añadir</button>
                                 </form>

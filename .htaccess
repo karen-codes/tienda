@@ -1,0 +1,23 @@
+# Habilita el módulo de reescritura de Apache
+RewriteEngine On
+
+# Define la base de la reescritura.
+# Asegúrate de que esta ruta coincida con el subdirectorio donde está tu aplicación.
+# Si tu aplicación está en http://localhost/tienda/, usa /tienda/
+# Si tu aplicación está en la raíz del dominio (ej. http://midominio.com/), usa /
+RewriteBase /tienda/
+
+# Regla para evitar que se reescriban archivos y directorios existentes
+# Si el archivo o directorio existe, no se hace nada y se sirve directamente.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Reescribe todas las solicitudes que no sean archivos o directorios existentes
+# para que sean manejadas por index.php.
+# La parte después de RewriteBase se pasa como un parámetro 'path'.
+RewriteRule ^(.*)$ index.php?path=$1 [L,QSA]
+
+# Puedes añadir reglas adicionales aquí si las necesitas en el futuro, por ejemplo:
+# Redireccionar de HTTP a HTTPS (para producción):
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

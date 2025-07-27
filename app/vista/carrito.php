@@ -12,6 +12,13 @@ $total_carrito = 0;
 foreach ($carrito as $item) {
     $total_carrito += $item['precio'] * $item['cantidad'];
 }
+
+// Recuperar y limpiar el mensaje de la sesión si existe (para mensajes de éxito/error)
+$message = null;
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -43,20 +50,20 @@ foreach ($carrito as $item) {
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Tienda Virtual</a>
+            <a class="navbar-brand" href="/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=inicio">Inicio</a>
+                        <a class="nav-link" href="/">Inicio</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=contacto">Contacto</a>
+                        <a class="nav-link" href="contacto">Contacto</a> <!-- CAMBIO: Enlace amigable -->
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php?action=carrito">Carrito</a>
+                        <a class="nav-link active" aria-current="page" href="carrito">Carrito</a> <!-- CAMBIO: Enlace amigable -->
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
@@ -68,14 +75,25 @@ foreach ($carrito as $item) {
 
     <div class="container py-4">
         <h1>Mi Carrito de Compras</h1>
-        <a href="index.php" class="btn btn-secondary mb-3">← Seguir comprando</a>
+        <a href="/" class="btn btn-secondary mb-3">← Seguir comprando</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+
+        <?php
+        // Mostrar mensaje de éxito o error si existe
+        if (isset($message)):
+            $alertClass = ($message['type'] === 'success') ? 'alert-success' : 'alert-danger';
+        ?>
+            <div class="alert <?= $alertClass ?> alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($message['text']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
         <?php if (empty($carrito)): ?>
             <div class="alert alert-info text-center" role="alert">
                 Tu carrito está vacío. ¡Añade algunos productos!
             </div>
         <?php else: ?>
-            <form action="index.php?action=actualizar_carrito" method="POST">
+            <form action="actualizar_carrito" method="POST"> <!-- CAMBIO: Acción amigable -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover table-cart">
                         <thead>
@@ -93,7 +111,7 @@ foreach ($carrito as $item) {
                                 <tr>
                                     <td>
                                         <?php if ($item['foto']): ?>
-                                            <img src="imagenes/<?= htmlspecialchars($item['foto']) ?>" class="cart-item-img" alt="<?= htmlspecialchars($item['nombre']) ?>">
+                                            <img src="imagenes/<?= htmlspecialchars($item['foto']) ?>" class="cart-item-img" alt="<?= htmlspecialchars($item['nombre']) ?>"> <!-- CAMBIO: Ruta relativa corregida -->
                                         <?php else: ?>
                                             <div class="cart-item-img d-flex align-items-center justify-content-center bg-light text-muted small">Sin imagen</div>
                                         <?php endif; ?>
@@ -105,7 +123,7 @@ foreach ($carrito as $item) {
                                     </td>
                                     <td>$<?= number_format($item['precio'] * $item['cantidad'], 2) ?></td>
                                     <td>
-                                        <a href="index.php?action=eliminar_del_carrito&id=<?= htmlspecialchars($id_producto) ?>" class="btn btn-danger btn-sm">Eliminar</a>
+                                        <a href="eliminar_del_carrito?id=<?= htmlspecialchars($id_producto) ?>" class="btn btn-danger btn-sm">Eliminar</a> <!-- CAMBIO: Enlace amigable -->
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -122,11 +140,11 @@ foreach ($carrito as $item) {
 
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" class="btn btn-info">Actualizar Carrito</button>
-                    <a href="index.php?action=finalizar_compra" class="btn btn-success">Finalizar Compra</a>
+                    <a href="finalizar_compra" class="btn btn-success">Finalizar Compra</a> <!-- CAMBIO: Enlace amigable -->
                 </div>
             </form>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                <a href="index.php?action=vaciar_carrito" class="btn btn-warning">Vaciar Carrito</a>
+                <a href="vaciar_carrito" class="btn btn-warning">Vaciar Carrito</a> <!-- CAMBIO: Enlace amigable -->
             </div>
         <?php endif; ?>
     </div>
@@ -138,6 +156,6 @@ foreach ($carrito as $item) {
     <!-- JS de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Tu archivo JS personalizado -->
-    <script src="assets/js/funciones.js"></script>
+    <script src="assets/js/funciones.js"></script> <!-- CAMBIO: Ruta relativa corregida -->
 </body>
 </html>

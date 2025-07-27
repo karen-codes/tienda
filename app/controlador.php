@@ -235,6 +235,7 @@ class Controller
         $nombreCliente = $_POST['nombre_cliente'] ?? '';
         $correoCliente = $_POST['correo_cliente'] ?? '';
         $direccionEnvio = $_POST['direccion_envio'] ?? '';
+        $metodoPago = $_POST['metodo_pago'] ?? ''; // Nuevo: para repoblar el método de pago
         $errors = []; // Para errores de validación del formulario de checkout
 
         include APP_PATH . "/app/vista/checkout.php"; // Carga la vista del formulario de checkout
@@ -255,6 +256,7 @@ class Controller
         $nombreCliente = trim($_POST['nombre_cliente'] ?? '');
         $correoCliente = trim($_POST['correo_cliente'] ?? '');
         $direccionEnvio = trim($_POST['direccion_envio'] ?? '');
+        $metodoPago = trim($_POST['metodo_pago'] ?? ''); // Nuevo: Recoge el método de pago
 
         // Validación de los datos del formulario de checkout
         if (empty($nombreCliente)) {
@@ -277,14 +279,32 @@ class Controller
             $errors['direccion_envio'] = "La dirección no debe exceder los 500 caracteres.";
         }
 
+        // Validación del método de pago
+        $metodosValidos = ['tarjeta', 'paypal', 'transferencia']; // Define tus métodos de pago válidos
+        if (empty($metodoPago) || !in_array($metodoPago, $metodosValidos)) {
+            $errors['metodo_pago'] = "Debe seleccionar un método de pago válido.";
+        }
+
         if (!empty($errors)) {
             // Si hay errores, se vuelve a mostrar el formulario de checkout con los errores
             $message = ['type' => 'danger', 'text' => 'Por favor, corrige los errores en el formulario de envío.'];
+            // Se pasan los datos para repoblar el formulario
+            // Las variables $nombreCliente, $correoCliente, $direccionEnvio, $metodoPago y $errors ya están disponibles
             include APP_PATH . "/app/vista/checkout.php";
             return; // Detener la ejecución para mostrar el formulario con errores
         }
 
-        // Si la validación es exitosa, procede a guardar el pedido
+        // SIMULACIÓN DE PROCESAMIENTO DE PAGO
+        // En una aplicación real, aquí integrarías una pasarela de pago (Stripe, PayPal, etc.)
+        $pagoExitoso = true; // Simula un pago exitoso
+
+        if (!$pagoExitoso) {
+            $_SESSION['message'] = ['type' => 'danger', 'text' => 'El pago no pudo ser procesado. Por favor, inténtalo de nuevo.'];
+            header("Location: index.php?action=checkout"); // Redirigir de vuelta al checkout
+            exit();
+        }
+
+        // Si la validación y el pago simulado son exitosos, procede a guardar el pedido
         $totalPedido = 0;
         foreach ($_SESSION['carrito'] as $item) {
             $totalPedido += $item['precio'] * $item['cantidad'];
@@ -292,6 +312,9 @@ class Controller
 
         $pedidoDAO = new PedidoDAO();
 
+        // Puedes añadir el método de pago al pedido si lo tienes en la tabla 'pedidos'
+        // Por ahora, solo se guarda la información existente. Si quieres guardar el método de pago,
+        // necesitarías añadir una columna 'metodo_pago' a tu tabla 'pedidos' y modificar PedidoDAO.php
         if ($pedidoDAO->guardarPedido($nombreCliente, $correoCliente, $direccionEnvio, $totalPedido, $_SESSION['carrito'])) {
             unset($_SESSION['carrito']); // Vaciar el carrito después de guardar el pedido
             $_SESSION['message'] = ['type' => 'success', 'text' => '¡Compra finalizada con éxito! Gracias por tu pedido.'];
@@ -304,4 +327,3 @@ class Controller
         }
     }
 }
-

@@ -1,10 +1,23 @@
+<?php
+// Inicia la sesión si aún no está iniciada.
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Recuperar y limpiar el mensaje de la sesión si existe
+$message = null;
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Contacto | Tienda Virtual</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/estilos.css">
+    <link rel="stylesheet" href="assets/css/estilos.css"> <!-- CAMBIO: Ruta relativa corregida -->
     <style>
         /* Estilos específicos para el formulario de contacto */
         .contact-form-container {
@@ -70,8 +83,33 @@
 </head>
 <body class="bg-light">
 
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Tienda Virtual</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="contacto">Contacto</a> <!-- CAMBIO: Enlace amigable -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="carrito">Carrito</a> <!-- CAMBIO: Enlace amigable -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container py-4">
-        <a href="index.php" class="btn btn-secondary mb-3">← Volver a la tienda</a>
+        <a href="/" class="btn btn-secondary mb-3">← Volver a la tienda</a> <!-- CAMBIO: Enlace a la raíz para inicio -->
 
         <div class="contact-form-container">
             <h1>Contáctanos</h1>
@@ -85,7 +123,7 @@
             }
             ?>
 
-            <form action="index.php?action=contacto" method="POST">
+            <form action="contacto" method="POST"> <!-- CAMBIO: Acción amigable -->
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Tu Nombre:</label>
                     <input type="text" class="form-control" id="nombre" name="nombre" required
@@ -114,8 +152,13 @@
         </div>
     </div>
 
-    <!-- Opcional: Incluir scripts JS si tienes alguno para esta página -->
-    <script src="../assets/js/funciones.js"></script>
+    <footer class="bg-light text-center py-3 mt-5">
+        <p class="mb-0">© <?= date('Y') ?> Tienda Virtual</p>
+    </footer>
+
+    <!-- JS de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tu archivo JS personalizado -->
+    <script src="assets/js/funciones.js"></script> <!-- CAMBIO: Ruta relativa corregida -->
 </body>
 </html>
