@@ -1,3 +1,16 @@
+<?php
+// Inicia la sesión si aún no está iniciada.
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Recuperar y limpiar el mensaje de la sesión si existe
+$message = null;
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -23,10 +36,10 @@
                         <a class="nav-link" href="index.php?action=inicio">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=contacto">Contacto</a> <!-- NUEVO: Enlace a Contacto -->
+                        <a class="nav-link" href="index.php?action=contacto">Contacto</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=carrito">Carrito</a> <!-- NUEVO: Enlace a Carrito -->
+                        <a class="nav-link" href="index.php?action=carrito">Carrito</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-md-2" href="admin/index.php?action=login">Admin</a>
@@ -37,8 +50,19 @@
     </nav>
 
     <div class="container">
+        <?php
+        // Mostrar mensaje de éxito o error si existe
+        if (isset($message)):
+            $alertClass = ($message['type'] === 'success') ? 'alert-success' : 'alert-danger';
+        ?>
+            <div class="alert <?= $alertClass ?> alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($message['text']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <?php foreach ($agrupados as $categoria => $items): ?>
-            <h2 class="text-primary mt-4 card-title"><?= htmlspecialchars($categoria) ?></h2> <!-- Añadido card-title para estilo -->
+            <h2 class="text-primary mt-4 card-title"><?= htmlspecialchars($categoria) ?></h2>
             <div class="row">
                 <?php foreach ($items as $item): ?>
                     <div class="col-md-4 mb-4">
@@ -47,7 +71,6 @@
                                 <img src="imagenes/<?= htmlspecialchars($item['foto']) ?>" class="card-img-top"
                                     alt="<?= htmlspecialchars($item['nombre']) ?>">
                             <?php else: ?>
-                                <!-- Placeholder para cuando no hay imagen, con estilos Bootstrap -->
                                 <div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted" style="height: 200px;">
                                     Sin imagen
                                 </div>
@@ -55,7 +78,14 @@
                             <div class="card-body">
                                 <h5 class="card-title"><?= htmlspecialchars($item['nombre']) ?></h5>
                                 <p class="card-text">$<?= number_format($item['precio'], 2) ?></p>
-                                <a href="index.php?action=detalle&id=<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary">Ver más</a>
+                                
+                                <a href="index.php?action=detalle&id=<?= htmlspecialchars($item['id']) ?>" class="btn btn-sm btn-outline-primary mb-2">Ver más</a>
+                                
+                                <!-- Formulario para añadir al carrito -->
+                                <form action="index.php?action=agregar_al_carrito&id=<?= htmlspecialchars($item['id']) ?>" method="POST" class="d-flex align-items-center">
+                                    <input type="number" name="cantidad" value="1" min="1" class="form-control form-control-sm me-2" style="width: 70px;">
+                                    <button type="submit" class="btn btn-sm btn-success">Añadir</button>
+                                </form>
                             </div>
                         </div>
                     </div>
