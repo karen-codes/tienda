@@ -1,14 +1,15 @@
 <?php
-// Inicia la sesión si aún no está iniciada.
+// Inicia la sesión si aún no está iniciada. Esto es crucial para el carrito basado en sesiones
+// y para mostrar mensajes temporales.
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Recuperar y limpiar el mensaje de la sesión si existe
+// Recuperar y limpiar el mensaje de la sesión si existe.
 $message = null;
 if (isset($_SESSION['message'])) {
     $message = $_SESSION['message'];
-    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo
+    unset($_SESSION['message']); // Eliminar el mensaje después de mostrarlo para que no se repita.
 }
 ?>
 <!DOCTYPE html>
@@ -51,7 +52,7 @@ if (isset($_SESSION['message'])) {
 
     <div class="container">
         <?php
-        // Mostrar mensaje de éxito o error si existe
+        // Mostrar mensaje de éxito o error si existe.
         if (isset($message)):
             $alertClass = ($message['type'] === 'success') ? 'alert-success' : 'alert-danger';
         ?>

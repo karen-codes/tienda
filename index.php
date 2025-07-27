@@ -1,81 +1,67 @@
 <?php
-// Define la ruta base de la aplicación.
-// Esto es crucial para que los 'require_once' funcionen correctamente.
+// Se define la ruta base de la aplicación si no está definida.
+// Esto asegura que las rutas relativas funcionen correctamente desde cualquier script.
 if (!defined('APP_PATH')) {
-    define('APP_PATH', dirname(dirname(__FILE__)));
+    define('APP_PATH', dirname(__FILE__)); // APP_PATH debe apuntar a la raíz de 'tienda'
 }
 
-// Inicia la sesión al principio de cada script que la necesite.
-// Esto es importante para la autenticación y los tokens CSRF.
+// Inicia la sesión si aún no está iniciada.
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Incluye la utilidad CSRF.
-require_once APP_PATH . "/config/csrf.php";
+// Se incluye el controlador público que manejará las acciones de la tienda.
+require_once APP_PATH . '/app/controlador.php';
 
-// Define las acciones que requieren autenticación.
-$accionesProtegidas = ['listar', 'registrar', 'eliminar', 'editar', 'logout'];
+// Se incluye la utilidad CSRF.
+// CORRECCIÓN: La ruta correcta es APP_PATH . "/config/csrf.php"
+require_once APP_PATH . "/config/csrf.php"; 
 
-// Obtiene la acción solicitada.
-$action = $_GET['action'] ?? 'login'; // Por defecto, la acción es 'login'
 
-// --- Autenticación y Protección CSRF ---
+// Se crea una instancia del controlador.
+$controller = new Controller();
 
-// Verifica si la acción requiere autenticación.
-if (in_array($action, $accionesProtegidas) && !isset($_SESSION['usuario'])) {
-    // Si la acción está protegida y el usuario no está logueado, redirige al login.
-    header("Location: index.php?action=login");
-    exit();
-}
+// Se obtiene la acción solicitada de la URL.
+// Si no se especifica ninguna acción, por defecto será 'inicio'.
+$action = $_GET['action'] ?? 'inicio';
 
-// Valida el token CSRF para todas las solicitudes POST, excepto para el login inicial
-// (ya que el token se genera en la vista de login y se valida al enviar).
-// NOTA: Para el login, la validación CSRF se manejará dentro de AuthController.php.
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action !== 'login') {
-    $csrf_token_sent = $_POST[CSRF_TOKEN_NAME] ?? '';
-    if (!validate_csrf_token($csrf_token_sent)) {
-        // Si el token es inválido, detiene la ejecución y muestra un error.
-        http_response_code(403); // Forbidden
-        die("Error de seguridad: Token CSRF inválido. Por favor, recargue la página e intente de nuevo.");
-    }
-}
-
-// --- Enrutamiento del Controlador ---
-
-// Se incluyen los controladores necesarios.
-require_once APP_PATH . "/admin/controlador/AuthController.php";
-require_once APP_PATH . "/admin/controlador/ProductoController.php";
-// Si tienes otros controladores, inclúyelos aquí.
-
-// Instancia los controladores.
-$authController = new AuthController();
-$productoController = new ProductoController();
-
-// Maneja las diferentes acciones.
+// Se manejan las diferentes acciones posibles.
 switch ($action) {
-    case 'login':
-        $authController->login();
+    case 'inicio':
+        // Muestra la página principal de la tienda.
+        $controller->inicio();
         break;
-    case 'logout':
-        $authController->logout();
+    case 'detalle':
+        // Muestra los detalles de un producto específico.
+        $id = $_GET['id'] ?? null;
+        $controller->detalle($id);
         break;
-    case 'listar':
-        $productoController->listar();
+    case 'contacto':
+        // Muestra la página de contacto y procesa el formulario.
+        $controller->contacto();
         break;
-    case 'registrar':
-        $productoController->registrar();
+    case 'carrito':
+        // Muestra la página del carrito de compras.
+        $controller->carrito();
         break;
-    case 'eliminar':
-        $productoController->eliminar();
+    case 'agregar_al_carrito':
+        $controller->agregar_al_carrito();
         break;
-    case 'editar':
-        $productoController->editar();
+    case 'actualizar_carrito':
+        $controller->actualizar_carrito();
+        break;
+    case 'eliminar_del_carrito':
+        $controller->eliminar_del_carrito();
+        break;
+    case 'vaciar_carrito':
+        $controller->vaciar_carrito();
+        break;
+    case 'finalizar_compra':
+        $controller->finalizar_compra();
         break;
     default:
-        // Si la acción no es reconocida, redirige al login o muestra un error 404.
-        header("Location: index.php?action=login");
-        exit();
-        // Opcional: http_response_code(404); echo "Página de administración no encontrada.";
+        // Si la acción no es reconocida, se muestra un error 404.
+        http_response_code(404); // Not Found
+        echo "Página no encontrada.";
         break;
 }
