@@ -37,66 +37,7 @@ $errors = $errors ?? [];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tu archivo CSS personalizado -->
     <link rel="stylesheet" href="/tienda/assets/css/estilos.css"> <!-- CAMBIO: Ruta con prefijo /tienda/ -->
-    <style>
-        /* Estilos específicos para la página de checkout */
-        .checkout-form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            margin: 30px auto;
-        }
-        .checkout-form-container h1 {
-            color: #9c70cfff;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .form-label {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #343a40;
-        }
-        .form-control {
-            border-radius: 5px;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.25rem rgba(108, 176, 248, 0.93);
-            outline: none;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border-color: #28a745;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            width: 100%;
-            margin-top: 20px;
-        }
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
-        .order-summary {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            margin-bottom: 20px;
-        }
-        .payment-methods label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        .payment-methods input[type="radio"] {
-            margin-right: 8px;
-        }
-    </style>
+    
 </head>
 <body class="bg-light">
 

@@ -1,7 +1,7 @@
 /* Paleta de Colores Personalizada */
 :root {
     --color-primary-light: #FFD1DC; /* Rosa Pastel */
-    --color-primary-medium: #f1b7bf; /* Rosa más intenso */
+    --color-primary-medium: #e98ae9; /* Rosa más intenso */
     --color-secondary-gold: #DAA520; /* Dorado */
     --color-secondary-gold-light: #FFD700; /* Dorado más claro */
     --color-background-light: #F8F8F8; /* Fondo muy claro, casi blanco */
@@ -20,7 +20,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: var(--color-primary-medium);
+    color: var(--color-text-light);
     font-weight: 600;
 }
 
@@ -96,7 +96,7 @@ a:hover {
 }
 
 .card-title {
-    color: var(--color-primary-medium);
+    color: var(--color-text-light);
     font-weight: 600;
 }
 
