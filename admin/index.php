@@ -16,15 +16,16 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once APP_PATH . "/config/csrf.php"; // Para protección CSRF
 
 // Define las acciones que requieren autenticación.
-$accionesProtegidas = ['listar', 'registrar', 'eliminar', 'editar', 'logout', 'mensajes', 'pedidos', 'ver_detalle_pedido', 'actualizar_estado_pedido']; // Añadida 'pedidos', 'ver_detalle_pedido', 'actualizar_estado_pedido'
+$accionesProtegidas = ['listar', 'registrar', 'eliminar', 'editar', 'logout', 'mensajes', 'pedidos', 'ver_detalle_pedido', 'actualizar_estado_pedido'];
 
 // Obtiene la acción solicitada.
 $action = $_GET['action'] ?? 'login'; // Por defecto, la acción es 'login'
 
 // --- Autenticación y Protección CSRF ---
 
-// Verifica si la acción requiere autenticación.
-if (in_array($action, $accionesProtegidas) && !isset($_SESSION['usuario'])) {
+// CORRECCIÓN CLAVE: Verifica si la acción requiere autenticación Y si la acción actual NO es 'login'.
+// Esto evita el bucle de redirección cuando se intenta acceder a la página de login.
+if (in_array($action, $accionesProtegidas) && !isset($_SESSION['usuario']) && $action !== 'login') {
     header("Location: index.php?action=login");
     exit();
 }
@@ -44,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action !== 'login') {
 // --- Inclusión de Controladores ---
 require_once APP_PATH . "/admin/controlador/AuthController.php";
 require_once APP_PATH . "/admin/controlador/ProductoController.php";
-require_once APP_PATH . "/admin/controlador/MensajeController.php"; // Cambiado a singular para MensajeController
-require_once APP_PATH . "/admin/controlador/PedidoController.php"; // NUEVO: Incluye el controlador de pedidos
+require_once APP_PATH . "/admin/controlador/MensajeController.php";
+require_once APP_PATH . "/admin/controlador/PedidoController.php";
 
 // Instancia los controladores.
 $authController = new AuthController();
 $productoController = new ProductoController();
-$mensajesController = new MensajeController(); // Instancia el controlador de mensajes (singular)
-$pedidoController = new PedidoController(); // NUEVO: Instancia el controlador de pedidos
+$mensajesController = new MensajeController();
+$pedidoController = new PedidoController();
 
 // Se inicializa el contenido principal a vacío
 $mainContent = '';
@@ -82,19 +83,25 @@ switch ($action) {
     case 'mensajes':
         $mensajesController->listarMensajes();
         break;
-    case 'pedidos': // NUEVO: Acción para listar pedidos
+    case 'pedidos':
         $pedidoController->listarPedidos();
         break;
-    case 'ver_detalle_pedido': // NUEVO: Acción para ver detalles de un pedido
+    case 'ver_detalle_pedido':
         $id = $_GET['id'] ?? null;
         $pedidoController->verDetallePedido($id);
         break;
-    case 'actualizar_estado_pedido': // NUEVO: Acción para actualizar el estado de un pedido
+    case 'actualizar_estado_pedido':
         $pedidoController->actualizarEstado();
         break;
     default:
-        // Redirige al login si la acción no es reconocida o no está autenticado
-        header("Location: index.php?action=login");
+        // Si la acción no es reconocida, redirige al login si no está autenticado
+        // o a una página 404 si ya está logueado y la acción es inválida.
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: index.php?action=login");
+        } else {
+            http_response_code(404);
+            echo "Página de administración no encontrada.";
+        }
         exit();
         break;
 }
@@ -102,8 +109,8 @@ switch ($action) {
 // Captura el contenido de la vista y lo almacena en $mainContent
 $mainContent = ob_get_clean();
 
-// Si la acción es 'login', 'logout' o cualquier otra que no deba usar el layout de dashboard,
-// simplemente imprime el contenido capturado y termina.
+// Si la acción es 'login' o 'logout', simplemente imprime el contenido capturado y termina.
+// Esto es para que la página de login no se envuelva en el layout del dashboard.
 if ($action === 'login' || $action === 'logout') {
     echo $mainContent;
     exit();
@@ -120,7 +127,8 @@ if ($action === 'login' || $action === 'logout') {
     <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Tu archivo CSS personalizado (incluye estilos de admin) -->
-    <link rel="stylesheet" href="<?= APP_PATH ?>/assets/css/estilos.css">
+    <!-- CAMBIO CRÍTICO: Ruta del CSS a relativa -->
+    <link rel="stylesheet" href="../assets/css/estilos.css"> 
 </head>
 <body class="admin-body">
     <div class="admin-wrapper">
@@ -131,8 +139,7 @@ if ($action === 'login' || $action === 'logout') {
                 <ul>
                     <li><a href="index.php?action=listar" class="<?= ($action === 'listar' || $action === 'registrar' || $action === 'editar') ? 'active' : '' ?>">Productos</a></li>
                     <li><a href="index.php?action=mensajes" class="<?= ($action === 'mensajes') ? 'active' : '' ?>">Mensajes de Contacto</a></li>
-                    <li><a href="index.php?action=pedidos" class="<?= ($action === 'pedidos' || $action === 'ver_detalle_pedido' || $action === 'actualizar_estado_pedido') ? 'active' : '' ?>">Pedidos</a></li> <!-- NUEVO: Enlace a Pedidos -->
-                    <!-- Puedes añadir más enlaces aquí (ej. Categorías, Usuarios) -->
+                    <li><a href="index.php?action=pedidos" class="<?= ($action === 'pedidos' || $action === 'ver_detalle_pedido' || $action === 'actualizar_estado_pedido') ? 'active' : '' ?>">Pedidos</a></li>
                     <li><a href="index.php?action=logout">Cerrar Sesión</a></li>
                 </ul>
             </nav>
@@ -161,6 +168,7 @@ if ($action === 'login' || $action === 'logout') {
     <!-- JS de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Tu archivo JS personalizado -->
-    <script src="<?= APP_PATH ?>/assets/js/funciones.js"></script>
+    <!-- CAMBIO CRÍTICO: Ruta del JS a relativa -->
+    <script src="../assets/js/funciones.js"></script>
 </body>
 </html>

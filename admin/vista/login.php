@@ -60,7 +60,7 @@
             margin-top: 15px;
         }
         input[type="submit"]:hover {
-            background-color: #3feeeeff;
+            background-color: #0056b3;
         }
         .error-message {
             color: red;
@@ -78,7 +78,8 @@
             <p class="error-message"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
 
-        <form method="POST" action="index.php?action=login">
+        <!-- CAMBIO TEMPORAL PARA DEPURACIÓN: Añadido onsubmit -->
+        <form method="POST" action="index.php?action=login" onsubmit="console.log('Formulario de login enviado!'); return true;">
             <!-- Campo oculto para el token CSRF -->
             <?php csrf_field(); ?>
 
@@ -99,3 +100,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -48,7 +48,7 @@ $errors = $errors ?? [];
             margin: 30px auto;
         }
         .checkout-form-container h1 {
-            color: #0056b3;
+            color: #9c70cfff;
             margin-bottom: 25px;
             text-align: center;
         }
@@ -66,7 +66,7 @@ $errors = $errors ?? [];
         }
         .form-control:focus {
             border-color: #80bdff;
-            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(108, 176, 248, 0.93);
             outline: none;
         }
         .btn-success {

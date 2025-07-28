@@ -39,6 +39,7 @@
         <div class="mb-3">
             <label class="form-label">Foto actual:</label><br>
             <?php if ($producto['foto']): ?>
+                <!-- CAMBIO CRÍTICO: Usar ruta relativa para la imagen desde admin/ -->
                 <img src="../imagenes/<?= htmlspecialchars($producto['foto']) ?>" alt="Foto actual del producto" class="img-thumbnail" style="max-width: 150px; height: auto;">
             <?php else: ?>
                 <em class="text-muted">Sin imagen</em>
@@ -74,5 +75,4 @@
         <a href="index.php?action=listar" class="btn btn-secondary ms-2">Cancelar</a>
     </form>
 </div>
-
 
