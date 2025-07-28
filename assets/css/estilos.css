@@ -5,7 +5,7 @@
     --color-secondary-gold: #DAA520; /* Dorado */
     --color-secondary-gold-light: #FFD700; /* Dorado más claro */
     --color-background-light: #F8F8F8; /* Fondo muy claro, casi blanco */
-    --color-text-dark: #333333; /* Texto oscuro */
+    --color-text-dark: #200808; /* Texto oscuro */
     --color-text-light: #111111; /* Texto claro */
     --color-marble-light: #F5F5DC; /* Beige claro para simular mármol */
     --color-marble-dark: #DCDCDC; /* Gris claro para vetas de mármol */
@@ -32,6 +32,11 @@ a {
 a:hover {
     color: var(--color-secondary-gold);
     text-decoration: underline;
+}
+
+/* Sobrescribir el color de Bootstrap text-primary */
+.text-primary {
+    color: var(--color-text-dark) !important; /* Usa el rosa medio de tu paleta */
 }
 
 /* Navbar */
@@ -373,6 +378,8 @@ footer {
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    max-width: 1000px; /* Ancho máximo para el formulario de contacto */
+    margin: 30px auto;
 }
 
 .contact-form-container h1 {
@@ -385,6 +392,8 @@ footer {
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    max-width: 600px; /* Ancho máximo para el formulario de contacto */
+    margin: 30px auto;
 }
 
 .checkout-form-container h1 {

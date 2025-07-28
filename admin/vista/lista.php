@@ -60,8 +60,13 @@ if (isset($message)):
                         <td><?= htmlspecialchars($producto['categoria']) ?></td>
                         <td><?= nl2br(htmlspecialchars(substr($producto['descripcion'] ?? '', 0, 100))) ?><?= (strlen($producto['descripcion'] ?? '') > 100) ? '...' : '' ?></td>
                         <td>
-                            <a href="index.php?action=editar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-info op">Editar</a>
-                            <a href="index.php?action=eliminar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-danger op" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</a>
+                            <!-- CAMBIO: Añadimos un contenedor flex para los botones y clases de margen/ancho -->
+                            <div class="d-flex flex-column flex-md-row gap-2">
+                                <a href="index.php?action=editar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-info flex-fill"> ✏️ Editar</a>
+                                <a href="index.php?action=eliminar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-danger flex-fill" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');"> 🗑️ Eliminar</a>
+                            </div>
+                           <!-- <a href="index.php?action=editar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-info op"> ✏️ Editar</a> -->
+                           <!--<a href="index.php?action=eliminar&id=<?= htmlspecialchars($producto['id']) ?>" class="btn btn-sm btn-danger op" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');"> 🗑️ Eliminar</a> -->
                         </td>
                     </tr>
                 <?php endforeach; ?>

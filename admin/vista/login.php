@@ -48,7 +48,7 @@
             box-sizing: border-box;
         }
         input[type="submit"] {
-            background-color: #007bff;
+            background-color: #ec7565ff;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -60,13 +60,7 @@
             margin-top: 15px;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-            margin-top: 10px;
-            margin-bottom: 15px;
-            font-size: 0.9em;
+            background-color: #ebc002ff;
         }
     </style>
 </head>

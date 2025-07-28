@@ -134,7 +134,7 @@ if ($action === 'login' || $action === 'logout') {
     <div class="admin-wrapper">
         <!-- Sidebar de Navegación -->
         <aside class="admin-sidebar">
-            <h2>Admin Panel</h2>
+            <h2>Panel de Administración</h2>
             <nav>
                 <ul>
                     <li><a href="index.php?action=listar" class="<?= ($action === 'listar' || $action === 'registrar' || $action === 'editar') ? 'active' : '' ?>">Productos</a></li>
